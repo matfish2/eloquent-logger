@@ -42,7 +42,7 @@ Use the trait on relevant models. E.g:
 
 Retrieving logs from for a model:
 
-   Post::find(1)->logs
+    Post::find(1)->logs
 
 Retrieving model from log:
 
