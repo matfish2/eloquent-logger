@@ -1,6 +1,6 @@
 {
     "name": "fish/eloquent-logger",
-    "description": "Log Eloquent model changes to a designated logs database",
+    "description": "Log Eloquent model changes to a designated logs table",
     "keywords":["laravel","eloquent","log","model", "events"],
     "license":"MIT",
     "authors": [
