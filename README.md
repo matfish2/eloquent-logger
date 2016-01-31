@@ -59,7 +59,7 @@ The Log contains the following properties:
 
 ### Query helpers
 
-* filter by action: `wasCreated`, `wasUpdated` or `wasDeleted`
+* `wasCreated`, `wasUpdated` or `wasDeleted` - filter by action.
 * `between` - filter by date range.
 
 Example:
