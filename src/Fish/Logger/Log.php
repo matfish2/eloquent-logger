@@ -58,24 +58,13 @@ class Log extends Model
 
     $query = clone($q);
 
-    $totalLogs = $q->count();
-    $log = $q->first();
-    $class = $log->loggable_type;
+    $class = $q->first()->loggable_type;
 
-    $logs = $q->where('created_at','<=',$datetime)->count();
+    $attrs = $q->wasCreated()->first()->after;
 
-    if ($logs==$totalLogs):
-      return $log->loggable?:new $class($log->toArray());
-    endif;
-
-    $initial = $q->wasCreated()->first();
-
-
-    $changes = $query->wasUpdated()
-                     ->where('created_at','<=',$datetime)
-                     ->get();
-
-    $attrs = $initial->after;
+     $changes = $query->wasUpdated()
+                         ->where('created_at','<=',$datetime)
+                         ->get();
 
     foreach ($changes as $change) {
 
