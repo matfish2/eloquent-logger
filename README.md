@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/matfish2/eloquent-logger.svg?branch=master)](https://travis-ci.org/matfish2/eloquent-logger)
 
 This package adds logging functionality to Eloquent models. All changes (create, update, delete) will be recorded in a designated logs table.
-Updates will record only dirty fields, so you can easily build up "diff" functionality and restore the state of the model at any given time.
+Updates will record only dirty fields.
 
 ## Installation
 
