@@ -3,6 +3,8 @@
 namespace Fish\Logger;
 
 use Illuminate\Database\Eloquent\Model;
+use App;
+use Models\User;
 
 class Log extends Model
 {
@@ -45,6 +47,47 @@ class Log extends Model
   public function scopeBetween($q, $start, $end) {
     return $q->whereBetween('created_at',[$start, $end]);
   }
+
+  public function scopeEntity($q, $loggableType, $loggableId) {
+    return $q->where('loggable_type',$loggableType)
+             ->where('loggable_id',$loggableId);
+  }
+
+
+  public function scopeStateOn($q, $datetime) {
+
+    $query = clone($q);
+
+    $totalLogs = $q->count();
+    $log = $q->first();
+    $class = $log->loggable_type;
+
+    $logs = $q->where('created_at','<=',$datetime)->count();
+
+    if ($logs==$totalLogs):
+      return $log->loggable?:new $class($log->toArray());
+    endif;
+
+    $initial = $q->wasCreated()->first();
+
+
+    $changes = $query->wasUpdated()
+                     ->where('created_at','<=',$datetime)
+                     ->get();
+
+    $attrs = $initial->after;
+
+    foreach ($changes as $change) {
+
+      $attrs = array_merge($attrs, $change->after);
+
+    }
+
+    return new $class($attrs);
+
+  }
+
+
 
   public function getBeforeAttribute($value) {
     return $value?(array) json_decode($value):null;

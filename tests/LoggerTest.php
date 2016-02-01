@@ -28,6 +28,10 @@ class LoggerTest extends TestCase
         ));
 
     $artisan->call('logger:init');
+
+    $fakeNow = Carbon::createFromFormat('Y-m-d H:i:s','2015-01-01 00:00:01');
+    Carbon::setTestNow($fakeNow);
+
     $user = User::create(['name'=>'Dolly','email'=>'dolly@example.com']);
     $author = Author::create(['user_id'=>$user->id,'role'=>'editor']);
 
@@ -54,6 +58,16 @@ class LoggerTest extends TestCase
 
     }
 
+
+    /**
+     * Get Logger package provider.
+     *
+     * @return array
+     */
+    protected function getPackageProviders($app)
+    {
+        return ['Fish\Logger\LoggerServiceProvider'];
+    }
 
     /** @test */
     public function it_records_model_creation()
@@ -100,15 +114,6 @@ class LoggerTest extends TestCase
 }
 
 
-    /**
-     * Get Sluggable package providers.
-     *
-     * @return array
-     */
-    protected function getPackageProviders($app)
-    {
-        return ['Fish\Logger\LoggerServiceProvider'];
-    }
 
 /** @test */
 public function it_records_model_delete()
@@ -133,8 +138,8 @@ public function it_records_model_delete()
 public function it_filters_logs_by_date_range()
 {
 
- $start = Carbon::now()->startOfDay();
- $end = Carbon::now()->endOfDay();
+ $start =  Carbon::createFromFormat('Y-m-d H:i:s','2015-01-01 00:00:00');
+ $end =  Carbon::createFromFormat('Y-m-d H:i:s','2015-01-03 00:00:00');
 
  $log = Log::wasCreated()->between($start, $end)->get();
 
@@ -164,5 +169,87 @@ public function it_rerieves_loggable_entity_from_log()
  $this->assertEquals(get_class($author), 'Models\Author');
 
 }
+
+
+/** @test */
+public function it_can_restore_state_on_a_given_time()
+{
+
+    $user = $this->runUpdate();
+    $logs = $user->logs();
+
+    $user = $user->fresh();
+
+    $this->assertEquals($user->logs()->stateOn('2015-01-01 00:00:01')->toArray(),
+    [
+        'name' => 'Dolly',
+        'email' => 'dolly@example.com'
+    ]
+ );
+
+     $this->assertEquals($user->logs()->stateOn('2015-01-01 02:00:00')->toArray(),
+    [
+        'name' => 'Shifra',
+        'email' => 'dolly@example.com'
+    ]
+ );
+
+      $current = $user->logs()->stateOn('2015-01-03 02:00:00');
+      $this->assertEquals($current->name, 'Shifra');
+      $this->assertEquals($current->email, 'edited@gmail.com');
+
+}
+
+/** @test */
+public function it_can_restore_state_of_deleted_model()
+{
+    $user = $this->runUpdate();
+
+    $fakeNow = Carbon::createFromFormat('Y-m-d H:i:s','2015-02-01 01:00:00');
+    Carbon::setTestNow($fakeNow);
+
+    $user->delete();
+
+    $log = Log::entity(User::class,1)->stateOn('2015-01-01 02:00:00');
+
+      $this->assertEquals($log->toArray(),
+        [
+            'name' => 'Shifra',
+            'email' => 'dolly@example.com'
+        ]
+     );
+
+    $log = Log::entity(User::class,1)->stateOn('2015-02-01 00:50:00');
+
+     $this->assertEquals($log->toArray(),
+        [
+            'name' => 'Shifra',
+            'email' => 'edited@gmail.com'
+        ]
+     );
+
+}
+
+protected function runUpdate() {
+   $user = User::find(1);
+    Auth::login($user);
+
+    $fakeNow = Carbon::createFromFormat('Y-m-d H:i:s','2015-01-01 01:00:00');
+    Carbon::setTestNow($fakeNow);
+
+    $user->name = "Shifra";
+    $user->save();
+
+    $user = $user->fresh();
+
+    $fakeNow = Carbon::createFromFormat('Y-m-d H:i:s','2015-01-02 00:00:00');
+    Carbon::setTestNow($fakeNow);
+
+    $user->email = 'edited@gmail.com';
+    $user->save();
+
+    return $user;
+}
+
 
 }

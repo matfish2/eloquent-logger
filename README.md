@@ -49,6 +49,16 @@ Retrieving model from log (if the action was not `deleted`):
 
     Fish\Logger\Log::find(1)->loggable;
 
+Retrieve the state of the model at a certain point of time:
+
+    Post::find(1)->logs()->stateOn('2015-02-02 13:00:00');
+
+To retrieve the state of a deleted model:
+
+    Fish\Logger\Log::entity(Post::class, 1)->stateOn('2016-01-01 12:00:00');
+
+The model will be retrieved even if the passed timestamp occured after it was already deleted.
+
 The Log contains the following properties:
 
 * `user_id` `integer`: User who did the action. if there is no authenticated user, set to `null`

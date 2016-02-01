@@ -40,7 +40,8 @@ trait Logger {
   }
 
   protected function logCreated() {
-    return $this->insertNewLog('created',null, $this);
+    $model = $this->stripRedundantKeys();
+    return $this->insertNewLog('created',null, $model);
   }
 
    protected function logUpdated() {
@@ -62,5 +63,17 @@ trait Logger {
 
         return compact('before', 'after');
     }
+
+    protected function stripRedundantKeys() {
+      $model = $this->toArray();
+
+      if (isset($model['created_at'])) unset($model['created_at']);
+      if (isset($model['updated_at'])) unset($model['updated_at']);
+      if (isset($model['id'])) unset($model['id']);
+
+      return $model;
+    }
+
+
 
 }
