@@ -96,8 +96,7 @@ class LoggerTest extends TestCase
     Auth::logout();
 
     $author = Author::find(1);
-    $author->role = 'admin';
-    $author->save();
+    $author->update(['role'=>'admin']);
 
     $log = $user->logs()->wasUpdated()->first();
 

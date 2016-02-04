@@ -7,10 +7,10 @@ trait Logger {
 
  public function logs() {
   return $this->morphMany('Fish\Logger\Log','loggable');
- }
+}
 
- public static function boot()
- {
+public static function boot()
+{
 
   parent::boot();
 
@@ -29,39 +29,39 @@ trait Logger {
 
 }
 
-  protected function insertNewLog($action, $before, $after) {
+protected function insertNewLog($action, $before, $after) {
 
-      $userId = Auth::id()?:null;
+  $userId = Auth::id()?:null;
 
-      return $this->logs()->save(new Log(['user_id'=>$userId,
-                                          'action'=>$action,
-                                          'before'=>$before?json_encode($before):null,
-                                          'after'=>$after?json_encode($after):null]));
-  }
+  return $this->logs()->save(new Log(['user_id'=>$userId,
+    'action'=>$action,
+    'before'=>$before?json_encode($before):null,
+    'after'=>$after?json_encode($after):null]));
+}
 
-  protected function logCreated() {
-    $model = $this->stripRedundantKeys();
-    return $this->insertNewLog('created',null, $model);
-  }
+protected function logCreated() {
+  $model = $this->stripRedundantKeys();
+  return $this->insertNewLog('created',null, $model);
+}
 
-   protected function logUpdated() {
-    $diff = $this->getDiff();
-    return $this->insertNewLog('updated',$diff['before'],$diff['after']);
-  }
+protected function logUpdated() {
+  $diff = $this->getDiff();
+  return $this->insertNewLog('updated',$diff['before'],$diff['after']);
+}
 
-    protected function logDeleted() {
-    return $this->insertNewLog('deleted',$this, null);
-  }
+protected function logDeleted() {
+  return $this->insertNewLog('deleted',$this, null);
+}
 
     /**
      * Fetch a diff for the model's current state.
      */
     protected function getDiff()
     {
-        $after = $this->getDirty();
-        $before = array_intersect_key($this->fresh()->toArray(), $after);
+      $after = $this->getDirty();
+      $before = array_intersect_key($this->fresh()->toArray(), $after);
 
-        return compact('before', 'after');
+      return compact('before', 'after');
     }
 
     protected function stripRedundantKeys() {
@@ -74,6 +74,17 @@ trait Logger {
       return $model;
     }
 
+    /**
+     * get a fresh copy of the model from the database
+     * a fallback for Laravel 4
+     */
+    public function fresh(array $with = [])
+    {
+      if (! $this->exists) {
+        return;
+      }
+      $key = $this->getKeyName();
+      return static::with($with)->where($key, $this->getKey())->first();
+    }
 
-
-}
+  }
