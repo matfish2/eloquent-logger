@@ -1,5 +1,5 @@
 # Eloquent Logger
-[![Latest Stable Version](https://poser.pugx.org/fish/eloquent-logger/v/stable)](https://packagist.org/packages/fish/eloquent-logger) [![Total Downloads](https://poser.pugx.org/fish/eloquent-logger/downloads)](https://packagist.org/packages/fish/eloquent-logger) [![Latest Unstable Version](https://poser.pugx.org/fish/eloquent-logger/v/unstable)](https://packagist.org/packages/fish/eloquent-logger) [![License](https://poser.pugx.org/fish/eloquent-logger/license)](https://packagist.org/packages/fish/eloquent-logger)
+[![Latest Stable Version](https://poser.pugx.org/fish/eloquent-logger/v/stable)](https://packagist.org/packages/fish/eloquent-logger) [![Total Downloads](https://poser.pugx.org/fish/eloquent-logger/downloads)](https://packagist.org/packages/fish/eloquent-logger) [![Latest Unstable Version](https://poser.pugx.org/fish/eloquent-logger/v/unstable)](https://packagist.org/packages/fish/eloquent-logger) [![License](https://poser.pugx.org/fish/eloquent-logger/license)](https://packagist.org/packages/fish/eloquent-logger) [![Build Status](https://travis-ci.org/matfish2/eloquent-logger.svg?branch=master)](https://travis-ci.org/matfish2/eloquent-logger)
 
 This package adds logging functionality to Eloquent models. All changes (create, update, delete) will be recorded in a designated logs table.
 Updates will record only dirty fields.
