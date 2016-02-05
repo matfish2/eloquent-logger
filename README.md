@@ -35,9 +35,7 @@ Use the trait on relevant models. E.g:
 
     class Post extends Model
     {
-
       use Logger;
-
     }
 
 Retrieving logs for a model:
