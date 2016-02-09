@@ -9,22 +9,18 @@ trait Logger {
   return $this->morphMany('Fish\Logger\Log','loggable');
 }
 
-public static function boot()
+public static function bootLogger()
 {
-
-  parent::boot();
-
   static::created(function ($model) {
-    return $model->logCreated();
-
+     $model->logCreated();
   });
 
   static::updating(function ($model) {
-    return $model->logUpdated();
+    $model->logUpdated();
   });
 
   static::deleting(function ($model) {
-    return $model->logDeleted($model);
+    $model->logDeleted($model);
   });
 
 }
