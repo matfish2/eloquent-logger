@@ -4,6 +4,8 @@ use Illuminate\Database\Console\Migrations\BaseCommand;
 use Illuminate\Support\Facades\Schema;
 use Symfony\Component\Console\Input\InputArgument;
 use Illuminate\Database\Schema\Blueprint;
+use Carbon\Carbon;
+use Illuminate\Filesystem\Filesystem;
 
 class InitLoggerCommand extends BaseCommand
 {
@@ -19,7 +21,15 @@ class InitLoggerCommand extends BaseCommand
      *
      * @var string
      */
-    protected $description = 'Create the logs table';
+    protected $description = 'Publish the logs table migration';
+
+    public function __construct(Filesystem $files)
+    {
+
+        parent::__construct();
+
+        $this->files = $files;
+    }
 
 
     /**
@@ -29,24 +39,35 @@ class InitLoggerCommand extends BaseCommand
      */
     public function fire()
     {
-        if (Schema::hasTable('mf_logs')) {
-            $this->info('Already initalized');
-            return;
-        }
 
-         Schema::create('mf_logs', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('user_id')->nullable();
-            $table->integer('loggable_id');
-            $table->string('loggable_type');
-            $table->string('action');
-            $table->text('before')->nullable();
-            $table->text('after')->nullable();
-            $table->datetime('created_at');
-        });
+        $file = __DIR__ . '/migrations/create_mf_logs_table.php';
+        $migrationsPath = $this->getMigrationsPath();
 
-        $this->info('Created logs table');
+        $this->files->copy(
+                $file,
+                $migrationsPath . "/" . $this->getNewFileName($file)
+            );
+
+        $this->info('Published migration. run "php artisan migrate" to create the logs table');
     }
+
+    protected function getNewFileName($file) {
+
+         return Carbon::now()->format('Y_m_d_His').'_'.basename($file);
+     }
+
+     protected function getMigrationsPath() {
+
+        $path = '/database/migrations';
+
+        $app = app();
+        $version = $app::VERSION[0];
+
+        return $version=='4'?app_path() . $path:base_path() . $path;
+     }
+
+
+
 
 
     /**

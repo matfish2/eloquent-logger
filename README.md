@@ -20,9 +20,13 @@ Add the service provider to the the list of providers in your `app.php`
 
     Fish\Logger\LoggerServiceProvider
 
-Initialize the package (create logs table):
+Publish migration:
 
     php artisan logger:init
+
+Run migration:
+
+    php artisan migrate
 
 ## Usage
 

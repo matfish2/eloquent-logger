@@ -1,6 +1,7 @@
 <?php namespace Fish\Logger;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Filesystem\Filesystem;
 
 /**
  * Class SluggableServiceProvider
@@ -35,7 +36,7 @@ class LoggerServiceProvider extends ServiceProvider
     {
         $this->app['logger.init'] = $this->app->share(function ($app) {
 
-            return new InitLoggerCommand();
+            return new InitLoggerCommand(new FileSystem);
         });
 
         $this->commands('logger.init');

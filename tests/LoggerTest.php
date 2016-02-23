@@ -27,8 +27,6 @@ class LoggerTest extends TestCase
         '--path'     => '../tests/database/migrations',
         ));
 
-    $artisan->call('logger:init');
-
     $fakeNow = Carbon::createFromFormat('Y-m-d H:i:s','2015-01-01 00:00:01');
     Carbon::setTestNow($fakeNow);
 
