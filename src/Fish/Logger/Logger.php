@@ -71,17 +71,4 @@ protected function logDeleted() {
       return $model;
     }
 
-    /**
-     * get a fresh copy of the model from the database
-     * a fallback for Laravel 4
-     */
-    public function fresh(array $with = [])
-    {
-      if (! $this->exists) {
-        return;
-      }
-      $key = $this->getKeyName();
-      return static::with($with)->where($key, $this->getKey())->first();
-    }
-
   }
