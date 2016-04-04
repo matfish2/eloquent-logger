@@ -46,7 +46,8 @@ protected function logUpdated() {
 }
 
 protected function logDeleted() {
-  return $this->insertNewLog('deleted',$this, null);
+  $model = $this->stripRedundantKeys();
+  return $this->insertNewLog('deleted',$model, null);
 }
 
     /**
