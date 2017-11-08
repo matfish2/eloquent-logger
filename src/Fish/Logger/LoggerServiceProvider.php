@@ -34,8 +34,7 @@ class LoggerServiceProvider extends ServiceProvider
      */
     public function registerCommands()
     {
-        $this->app['logger.init'] = $this->app->share(function ($app) {
-
+        $this->app->singleton('logger.init', function ($app) {
             return new InitLoggerCommand(new FileSystem);
         });
 
